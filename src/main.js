@@ -5,6 +5,8 @@ import background_single from "./background_single.png";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+let playerImage=new Image();
+playerImage.src=player;
 
 
 canvas.width = 800;
@@ -15,21 +17,19 @@ class InputHandler {
     this.keys = [];
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown' ||
-        'ArrowUp' ||
-        'ArrowDown' ||
-        'ArrowLeft' && this.keys.indexOf(e.key) === -1) {
+        e.key === 'ArrowUp' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'ArrowLeft' && this.keys.indexOf(e.key) === -1) {
         this.keys.push(e.key);
       }
-      console.log(this.keys);
     })
     window.addEventListener('keyup', (e) => {
       if (e.key === 'ArrowDown' ||
-        'ArrowUp' ||
-        'ArrowLeft' ||
-        "ArrowRight") {
+        e.key === 'ArrowUp' ||
+        e.key === 'ArrowLeft' ||
+        e.key === "ArrowRight") {
         this.keys.splice(this.keys.indexOf(e.key), 1);
       }
-      console.log(this.keys);
     })
   }
 }
@@ -47,11 +47,26 @@ class Player {
     this.height = 200;
     this.width = 200;
     this.x = 0;
-    this.y = 0;
+    this.y = this.gameHeight - this.height;
+    this.image=playerImage;
+    this.frameX=0;
+    this.frameY=0;
   }
   draw(context) {
-    context.fillStyle = 'red';
-    context.fillRect(this.x, this.y, this.width, this.height);
+   
+    context.drawImage(
+      this.image,
+      this.frameX*this.width,
+      this.frameY*this.height,
+      this.width,
+      this.height,
+      this.x,this.y,
+      this.width,
+      this.height);//i frame
+  }
+  update() {
+    this.x++;
+    if(this.x>this.gameWidth)this.x=0
   }
 }
 
@@ -69,13 +84,16 @@ function displayStatus() {
 
 const input = new InputHandler();
 let p = new Player(canvas.width, canvas.height);
-p.draw(ctx);
+
 
 
 function animate(timestamp) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  p.draw(ctx);
+  p.update();
+
   window.requestAnimationFrame(animate);
 }
-
+animate();
 
