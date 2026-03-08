@@ -11,6 +11,7 @@ playerImage.src=player;
 
 canvas.width = 800;
 canvas.height = 720;
+let last=0;
 
 class InputHandler {
   constructor() {
@@ -51,9 +52,20 @@ class Player {
     this.image=playerImage;
     this.frameX=0;
     this.frameY=0;
+    this.now=0;
+    this.start=40;
   }
-  draw(context) {
-   
+  draw(context,delta) {
+this.now+=delta;
+console.log(this.now);
+    if (this.now>this.start)
+    {
+      if(this.frameX<6)
+        {this.frameX++;}
+      else this.frameX=0;
+      this.now=0;
+    }
+
     context.drawImage(
       this.image,
       this.frameX*this.width,
@@ -89,11 +101,13 @@ let p = new Player(canvas.width, canvas.height);
 
 function animate(timestamp) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let delta=timestamp-last;
+  last=timestamp;
 
-  p.draw(ctx);
+  p.draw(ctx,delta);
   p.update();
 
   window.requestAnimationFrame(animate);
 }
-animate();
+animate(0);
 
