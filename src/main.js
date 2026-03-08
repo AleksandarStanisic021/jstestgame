@@ -19,8 +19,8 @@ class InputHandler {
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown' ||
         e.key === 'ArrowUp' ||
-        e.key === 'ArrowDown' ||
-        e.key === 'ArrowLeft' && this.keys.indexOf(e.key) === -1) {
+        e.key === 'ArrowLeft' ||
+        e.key==='ArrowRight'&& this.keys.indexOf(e.key) === -1) {
         this.keys.push(e.key);
       }
     })
@@ -40,7 +40,6 @@ class background {
 }
 
 
-
 class Player {
   constructor(gameWidth, gameHeight) {
     this.gameWidth = gameWidth;
@@ -54,18 +53,22 @@ class Player {
     this.frameY=0;
     this.now=0;
     this.start=40;
+    this.speed=0;
   }
   draw(context,delta) {
-this.now+=delta;
-console.log(this.now);
+ 
+  if (this.speed!==0){
+    this.now+=delta;
     if (this.now>this.start)
     {
       if(this.frameX<6)
         {this.frameX++;}
       else this.frameX=0;
       this.now=0;
+    }}
+    else{
+      this.frameX=3;
     }
-
     context.drawImage(
       this.image,
       this.frameX*this.width,
@@ -76,9 +79,21 @@ console.log(this.now);
       this.width,
       this.height);//i frame
   }
-  update() {
-    this.x++;
-    if(this.x>this.gameWidth)this.x=0
+  update(input) {
+    if(this.x>this.gameWidth)this.x=0;
+    this.x+=this.speed;
+    if(input.keys[0]==="ArrowRight")
+    {
+      this.speed=5;
+    }
+    else if(input.keys[0]==="ArrowLeft")
+      {
+        this.speed=-5;
+      }
+      else
+    {
+      this.speed=0;
+    }
   }
 }
 
@@ -105,7 +120,7 @@ function animate(timestamp) {
   last=timestamp;
 
   p.draw(ctx,delta);
-  p.update();
+  p.update(input);
 
   window.requestAnimationFrame(animate);
 }
